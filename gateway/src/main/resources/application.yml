@@ -1,0 +1,32 @@
+server:
+  port: 8001
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+    gateway:
+      routes:
+        - id: service-route1
+          #          uri: http://localhost:8002
+          uri: lb://service1
+          predicates:
+            - Path=/service1/test1/**
+          filters:
+            - AddRequestHeader=X-Request-Foo,Bar1
+        - id: service-route2
+          uri: lb://service1
+          predicates:
+            - Path=/service1/test2/**
+          filters:
+            - AddRequestHeader=X-Request-Foo,Bar2
+      globalcors:
+        cors-configurations: # 跨域配置
+          '[/**]':
+            allowedOrigins: "https://docs.spring.io"
+            allowedMethods: "*"
